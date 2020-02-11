@@ -8,7 +8,7 @@ var cheerio = require("cheerio");
 var Comment = require("../models/Comment.js");
 var Article = require("../models/Article.js");
 
- router.get("/", function(req, res){
+ router.get("/", function(req, res) {
      res.redirect("/articles");
  });
 
@@ -18,29 +18,29 @@ var Article = require("../models/Article.js");
         var titlesArray = [];
 
         $(".c-entry-box--compact__title").each(function(i, element){
-            var result {};
+            var result = {};
 
-            result.title = $(this).children("a").attr("href");
+            result.title = $(this).children("a").text();
             result.link = $(this).children("a").attr("href");
 
-            if (result.title !== "" && result.link !== ""){
+            if (result.title !== "" && result.link !== "") {
                  
                 if (titlesArray.indexOf(result.title) == -1){
                     titlesArray.push(result.title);
 
-                    Article.count({ title: result.title }, function (err, test){
+                    Article.count({ title: result.title }, function (err, test) {
                         if (test === 0){
                             var entry = new Article(result);
 
-                            entry.save(function(err, doc){
+                            entry.save(function(err, doc) {
                                 if (err) {
                                     console.log(err)
                                 } else {
                                     console.log(doc)
                                 }
-                            })
+                            });
                         }                
-                    }) 
+                    });
                 } else{ 
                     console.log("Article already exists");
                 }
@@ -48,19 +48,21 @@ var Article = require("../models/Article.js");
         } else {
             console.log("Not saved to DB, missing data")
         }
-        
     }); 
         res.redirect("/");
     });
 });
 
-router.get("/articles", function (req,res){
-    Article.find().sort({_id: -1}).exec(function(err, doc){
+router.get("/articles", function (req,res) {
+    Article.find()
+    .sort({_id: -1})
+    .exec(function(err, doc) {
+
         if (err) {
             console.log(err);
         } else {
-            var artc1 = { article: doc };
-            res.render("index", artc1);
+            var artcl = { article: doc };
+            res.render("index", artcl);
         }
     });
 });
@@ -69,24 +71,24 @@ router.get("/articles-json", function(req, res){
     Article.find({}, function(err, doc){
         if (err){
             console.log(err);
-        }else {
+        } else {
            res.json(doc);
         }
     }); 
 });
 
-router.get("/clearAll", function(req, res){
-    Article.remove({}, function (err, doc){
+router.get("/clearAll", function(req, res) {
+    Article.remove({}, function (err, doc) {
         if (err) {
             console.log(err);
-        }else {
+        } else {
             console.log("removed all articles");
         }
     });
     res.redirect("/articles-json");
 });
 
-router.get("/readArticle/:id", function(req,res){
+router.get("/readArticle/:id", function(req,res) {
     var articleId = req.params.id;
     var hbsObj = {
         article: [],
@@ -95,7 +97,7 @@ router.get("/readArticle/:id", function(req,res){
 
     Article.findOne({ _id: articleId })
     .populate("comment")
-    .exec(function(err, doc){
+    .exec(function(err, doc) {
         if (err) {
             console.log("error: " + err);
         } else{
@@ -145,7 +147,7 @@ router.post("/comment/:id", function(req, res){
         ).exec(function (err, doc){
             if (err) {
                 console.log(err);
-            }else {
+            } else {
                 res.redirect("/readArticle/" + articleId);
             }
         });

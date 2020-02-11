@@ -18,7 +18,8 @@ var exphbs = require("express-handlebars");
 app.engine("handlebars", exphbs({ defaultLayout: "main" }))
 app.set("view engine", "handlebars");
 
-mongoose.connect("mongodb://localhost/scraped_news");
+// 
+mongoose.connect("mongodb://localhost/AllTheNews", { useNewUrlParser: true, useUnifiedTopology: true });
 var db = mongoose.connection;
 
 db.on("error", console.error.bind(console, "connection error: "));
