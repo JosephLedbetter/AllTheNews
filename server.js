@@ -15,21 +15,20 @@ app.use(
 app.use(express.static(process.cwd() + "/public"));
 
 var exphbs = require("express-handlebars");
-app.engine("handlebars", exphbs({ defaultLayout: "main" }))
+app.engine("handlebars", exphbs({ defaultLayout: "main" }));
 app.set("view engine", "handlebars");
 
 // 
 mongoose.connect("mongodb://localhost/AllTheNews", { useNewUrlParser: true, useUnifiedTopology: true });
-var db = mongoose.connection;
 
+var db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error: "));
 db.once("open", function(){
-    console.log("connected to mongoose");
+    console.log("Connected to mongoose");
 });
 
-var exphbs = require("express-handlebars");
-app.engine("handlebars", exphbs({ defaultLayout: "main"}));
-app.set("view engine", "handlebars");
+var routes = require("./controller/controller");
+app.use("/", routes);
 
 var PORT = process.env.PORT || 3000; 
 app.listen(PORT, function(){
